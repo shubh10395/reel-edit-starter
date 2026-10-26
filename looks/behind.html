@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><title>behind</title>
+<!-- LOOK: text behind you. Huge letters sit behind your head. Needs: frames + cutout. -->
+<link rel="stylesheet" href="base.css">
+<style>.bh{position:absolute;left:0;right:0;text-align:center;font-weight:900;letter-spacing:-.06em;line-height:.82;text-transform:uppercase;font-size:290px}</style>
+</head><body>
+<script>
+// ---- edit me ----  (move top1/top2 so the second line just touches the top of your head)
+const CONFIG = { color: "#2641D9", line1: "Edited", line2: "by AI", top1: 150, top2: 390, chip: "TEXT BEHIND YOU · AUTO CUTOUT" };
+</script>
+<canvas class="full" id="v" width="1080" height="1920"></canvas>
+<div class="bh" id="a"></div><div class="bh" id="b"></div>
+<canvas class="full" id="fg" width="1080" height="1920"></canvas>
+<span class="chip" id="ch" style="left:50%;transform:translateX(-50%);top:1180px;font-size:30px;padding:14px 28px;background:#fff;color:#15120E"></span>
+<script src="../work/frames.js"></script><script src="engine.js"></script>
+<script>
+const { cl, lerp, ease } = Look, $ = id => document.getElementById(id);
+for (const [id, txt, top] of [["a", CONFIG.line1, CONFIG.top1], ["b", CONFIG.line2, CONFIG.top2]]) { $(id).textContent = txt; $(id).style.top = top + "px"; $(id).style.color = CONFIG.color; }
+$("ch").textContent = CONFIG.chip;
+const g = $("v").getContext("2d"), f = $("fg").getContext("2d");
+Look.start(t => {
+  Look.paint(g, Look.frame(t)); f.clearRect(0, 0, 1080, 1920); Look.paint(f, Look.cut(t));
+  const p1 = ease.out(cl((t - .15) / .35)), p2 = ease.out(cl((t - .3) / .35));
+  $("a").style.opacity = p1; $("a").style.transform = `translateY(${lerp(120, 0, p1)}px)`;
+  $("b").style.opacity = p2; $("b").style.transform = `translateY(${lerp(120, 0, p2)}px)`;
+  $("ch").style.opacity = cl((t - .7) / .2);
+});
+</script></body></html>

@@ -1,0 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800;900&family=Geist+Mono:wght@500;600;700&family=Instrument+Serif:ital@1&display=block");
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+body { position: relative; font-family: Geist, system-ui, sans-serif; color: #15120E; }
+canvas.full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+.abs { position: absolute; }
+.mono { font-family: "Geist Mono", monospace; }
+.serif { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; }
+.chip { position: absolute; font-family: "Geist Mono", monospace; font-weight: 700; letter-spacing: .1em; border-radius: 999px; white-space: nowrap; }

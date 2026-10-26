@@ -1,0 +1,13 @@
+{
+  "name": "reel-edit-starter",
+  "version": "1.0.0",
+  "description": "8 animated looks for vertical reels. Edit them with Claude Code, render them with Puppeteer and ffmpeg.",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "render": "node render.js"
+  },
+  "dependencies": {
+    "puppeteer": "^25.12.0"
+  }
+}

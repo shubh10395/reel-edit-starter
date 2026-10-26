@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><title>glass</title>
+<!-- LOOK: glass widgets. Frosted glass cards float around you and pop in one by one. Needs: frames. -->
+<link rel="stylesheet" href="base.css">
+<style>
+.wg{position:absolute;border-radius:44px;background:rgba(255,255,255,.28);backdrop-filter:blur(26px) saturate(1.7);border:1.5px solid rgba(255,255,255,.55);box-shadow:0 24px 60px rgba(0,0,0,.18);padding:28px 30px;opacity:0}
+.lb{font-family:"Geist Mono";font-weight:600;font-size:22px;letter-spacing:.1em;color:rgba(21,18,14,.65);text-transform:uppercase}
+.bn{font-weight:900;font-size:128px;letter-spacing:-.06em;line-height:1}
+.pb{height:22px;border-radius:12px;background:rgba(21,18,14,.12);margin-top:22px;overflow:hidden}
+.pb i{display:block;height:100%;border-radius:12px;width:0}
+</style></head><body>
+<script>
+// ---- edit me ----  (if a widget covers your face, move its left/top below, or ask Claude to)
+const CONFIG = { accent: "#2641D9", views: "193K", viewsLabel: "Views", name: "Your name", sub: "raw clip", editedBy: "Claude", exportText: "4K" };
+</script>
+<canvas class="full" id="v" width="1080" height="1920"></canvas>
+<div class="wg" style="left:40px;top:140px;width:470px;height:320px"><div class="lb" id="vl"></div><div class="bn" id="vn"></div>
+  <svg width="410" height="70" viewBox="0 0 410 70"><path id="sp" d="M0 62 L60 58 L120 55 L180 50 L240 44 L300 30 L360 12 L410 4" fill="none" stroke-width="6" stroke-linecap="round"/></svg></div>
+<div class="wg" style="left:570px;top:140px;width:470px;height:320px"><div class="lb">Rendering</div><div id="pct" style="font-weight:800;font-size:58px;letter-spacing:-.03em;margin-top:18px">0%</div><div class="pb"><i id="pbi"></i></div><div class="lb" style="margin-top:22px;font-size:20px">1080 &times; 1920 &middot; 30 FPS</div></div>
+<div class="wg" style="left:40px;top:520px;width:300px;height:400px"><div class="lb">Top reels</div><div id="bars" style="margin-top:28px;height:250px;display:flex;align-items:flex-end;gap:10px"></div></div>
+<div class="wg" style="left:790px;top:520px;width:250px;height:400px;display:flex;flex-direction:column;align-items:center"><div class="lb">Export</div>
+  <svg style="margin-top:40px" width="190" height="190" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(21,18,14,.12)" stroke-width="12"/><circle id="rg" cx="60" cy="60" r="50" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)"/><text id="ex" x="60" y="72" text-anchor="middle" font-family="Geist" font-weight="900" font-size="34" fill="#15120E"></text></svg></div>
+<div class="wg" style="left:40px;top:1240px;width:470px;height:240px"><div class="lb">Now editing</div><div style="display:flex;align-items:center;gap:20px;margin-top:22px"><canvas id="av" width="220" height="220" style="width:110px;height:110px;border-radius:55px"></canvas><div><div id="nm" style="font-weight:800;font-size:46px;letter-spacing:-.03em"></div><div id="sb" class="mono" style="font-size:22px;color:rgba(21,18,14,.6)"></div></div></div></div>
+<div class="wg" style="left:570px;top:1240px;width:470px;height:240px"><div class="lb">Edited by</div><div id="eb" style="font-weight:800;font-size:58px;letter-spacing:-.03em;margin-top:30px"></div></div>
+<script src="../work/frames.js"></script><script src="engine.js"></script>
+<script>
+const { cl, lerp, ease } = Look, $ = id => document.getElementById(id);
+$("vl").textContent = CONFIG.viewsLabel; $("vn").textContent = CONFIG.views; $("sp").setAttribute("stroke", CONFIG.accent);
+$("pbi").style.background = CONFIG.accent; $("rg").setAttribute("stroke", CONFIG.accent); $("ex").textContent = CONFIG.exportText;
+$("nm").textContent = CONFIG.name; $("sb").textContent = CONFIG.sub; $("eb").textContent = CONFIG.editedBy;
+$("bars").innerHTML = [210, 44, 30, 28, 24].map((h, k) => `<i style="width:34px;border-radius:8px;height:${h}px;background:${k ? "rgba(21,18,14,.35)" : CONFIG.accent}"></i>`).join("");
+const g = $("v").getContext("2d"), wg = [...document.querySelectorAll(".wg")];
+Look.start(t => {
+  Look.paint(g, Look.frame(t));
+  wg.forEach((w, k) => { const p = cl((t - .08 - k * .07) / .35); w.style.opacity = cl((t - .08 - k * .07) / .12); w.style.transform = `scale(${lerp(.7, 1, ease.back(p))})`; });
+  const pr = Math.round(100 * cl((t - .3) / 1.4)); $("pct").textContent = pr + "%"; $("pbi").style.width = pr + "%";
+  $("rg").setAttribute("stroke-dashoffset", 314 * (1 - ease.out(cl((t - .4) / 1.2))));
+  const f = Look.frame(t); if (f) $("av").getContext("2d").drawImage(f, 290, 470, 500, 500, 0, 0, 220, 220);
+});
+</script></body></html>

@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"><title>timeline</title>
+<!-- LOOK: timeline. An editing timeline on top with a moving playhead, you on the bottom. Needs: frames. -->
+<link rel="stylesheet" href="base.css">
+<style>
+.top{position:absolute;left:0;right:0;top:0;height:900px;background:#141413}
+.tt{position:absolute;left:0;right:0;top:80px;text-align:center;font-weight:800;font-size:84px;letter-spacing:-.045em;color:#F5F4EE}
+.tt i{font-family:"Instrument Serif";font-weight:400;font-size:100px;color:#D97757}
+.ed{position:absolute;left:40px;right:40px;top:230px;height:620px;border-radius:30px;background:#1E1D1C;border:2px solid #34332F;overflow:hidden}
+.bar{height:64px;display:flex;align-items:center;gap:12px;padding:0 24px;border-bottom:2px solid #2C2B28;font-family:"Geist Mono";font-size:22px;color:#9A988F}
+.dot{width:16px;height:16px;border-radius:8px}
+.trk{position:absolute;left:24px;right:24px;height:96px;display:flex;align-items:center}
+.nm{width:90px;font-family:"Geist Mono";font-weight:700;font-size:22px;color:#77756E}
+.ln{flex:1;height:84px;position:relative;border-radius:12px;background:#262523;overflow:hidden;white-space:nowrap}
+.blk{position:absolute;top:8px;bottom:8px;border-radius:10px;font-family:"Geist Mono";font-weight:700;font-size:20px;color:#fff;display:flex;align-items:center;padding:0 12px;overflow:hidden}
+.phd{position:absolute;top:70px;bottom:20px;width:5px;background:#D97757;box-shadow:0 0 14px #D97757;z-index:5}
+</style></head><body>
+<script>
+// ---- edit me ----
+const CONFIG = { title: "Claude", titleItalic: "edits it", accent: "#2641D9", text: ["HOOK", "CHIP", "CAPTION"], fx: ["ZOOM", "WHIP", "GLOW"] };
+</script>
+<canvas class="full" id="v" width="1080" height="1920"></canvas>
+<div class="top"></div><div class="tt"><span id="t1"></span> <i id="t2"></i></div>
+<div class="ed"><div class="bar"><span class="dot" style="background:#FF5F57"></span><span class="dot" style="background:#FEBC2E"></span><span class="dot" style="background:#28C840"></span><span style="margin-left:14px">timeline</span><span id="pc" style="margin-left:auto;color:#D97757">0%</span></div>
+  <div class="trk" style="top:90px"><span class="nm">CLIP</span><span class="ln" id="clip"></span></div>
+  <div class="trk" style="top:200px"><span class="nm">TEXT</span><span class="ln" id="txt"></span></div>
+  <div class="trk" style="top:310px"><span class="nm">FX</span><span class="ln" id="fx"></span></div>
+  <div class="trk" style="top:420px"><span class="nm">SFX</span><span class="ln" id="sfx" style="display:flex;align-items:center;padding-left:8px"></span></div>
+  <div class="phd" id="ph"></div></div>
+<div class="abs" style="left:0;right:0;top:896px;height:6px;background:#D97757"></div>
+<script src="../work/frames.js"></script><script src="engine.js"></script>
+<script>
+const { cl } = Look, $ = id => document.getElementById(id);
+$("t1").textContent = CONFIG.title; $("t2").textContent = CONFIG.titleItalic;
+const pos = [[2, 26], [32, 20], [56, 30]], pos2 = [[6, 18], [40, 22], [70, 20]];
+$("txt").innerHTML = CONFIG.text.map((s, k) => `<span class="blk" style="left:${pos[k][0]}%;width:${pos[k][1]}%;background:${CONFIG.accent}">${s}</span>`).join("");
+$("fx").innerHTML = CONFIG.fx.map((s, k) => `<span class="blk" style="left:${pos2[k][0]}%;width:${pos2[k][1]}%;background:#B5552F">${s}</span>`).join("");
+$("sfx").innerHTML = [...Array(130)].map((_, k) => `<i style="display:inline-block;width:6px;margin-right:4px;background:#5FB0FF;border-radius:3px;height:${8 + Math.round(56 * Math.abs(Math.sin(k * .7) * Math.sin(k * .23)))}px"></i>`).join("");
+$("clip").innerHTML = [...Array(14)].map(() => `<canvas width="136" height="136" style="width:68px;height:68px;border-radius:6px;margin:8px 2px 0 0"></canvas>`).join("");
+const g = $("v").getContext("2d"); let filled = false;
+Look.start(t => {
+  if (!filled && Look.count) { [...$("clip").children].forEach((c, k) => c.getContext("2d").drawImage(Look.frameAt(Math.floor(Look.count * k / 14)), 290, 470, 500, 500, 0, 0, 136, 136)); filled = true; }
+  g.fillStyle = "#000"; g.fillRect(0, 0, 1080, 1920); Look.paint(g, Look.frame(t), 0, 380, 1080, 1020, 0, 900, 1080, 1020);
+  const p = cl((t - .2) / 1.9); $("ph").style.left = (120 + p * 880) + "px"; $("pc").textContent = p >= 1 ? "Done" : Math.round(p * 100) + "%";
+});
+</script></body></html>

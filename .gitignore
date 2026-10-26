@@ -1,0 +1,9 @@
+node_modules/
+work/
+out/
+*.mov
+*.MOV
+*.mp4
+!docs/*.mp4
+.DS_Store
+__pycache__/

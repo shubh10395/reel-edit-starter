@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><title>checklist</title>
+<!-- LOOK: checklist. A dark glass panel at chest level ticks off each step. Needs: frames. -->
+<link rel="stylesheet" href="base.css">
+<style>
+.ck{position:absolute;left:70px;right:70px;top:1130px;background:rgba(24,24,23,.8);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.12);border-radius:32px;padding:30px 36px;color:#F5F4EE;opacity:0}
+.hd{display:flex;align-items:center;gap:14px;font-family:"Geist Mono";font-size:28px;color:#C9C7BF}
+.hd i{width:18px;height:18px;border-radius:9px;background:#D97757;display:inline-block}
+.rw{display:flex;align-items:center;gap:20px;font-size:38px;font-weight:600;margin-top:20px}
+.bx{width:46px;height:46px;border-radius:23px;border:3px solid #5A5955;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:transparent}
+.rw.on .bx{background:#2FB36B;border-color:#2FB36B;color:#fff}
+.tg{margin-left:auto;font-family:"Geist Mono";font-size:22px;color:#8E8C85;opacity:0}
+.rw.on .tg{opacity:1}
+</style></head><body>
+<script>
+// ---- edit me ----
+const CONFIG = { title: "Claude is editing your clip", steps: ["Cut every pause", "Added the graphics", "Added sound effects", "Made the cover", "Wrote the caption"], firstTick: .85, gap: .2 };
+</script>
+<canvas class="full" id="v" width="1080" height="1920"></canvas>
+<div class="ck" id="ck"><div class="hd"><i></i><span id="tt"></span></div><div id="rows"></div></div>
+<script src="../work/frames.js"></script><script src="engine.js"></script>
+<script>
+const { cl, lerp, ease } = Look, $ = id => document.getElementById(id);
+$("tt").textContent = CONFIG.title;
+$("rows").innerHTML = CONFIG.steps.map(s => `<div class="rw"><span class="bx">&#10003;</span>${s}<span class="tg">done</span></div>`).join("");
+const g = $("v").getContext("2d"), rows = [...document.querySelectorAll(".rw")];
+Look.start(t => {
+  Look.paint(g, Look.frame(t));
+  const p = ease.out(cl((t - .05) / .3)); $("ck").style.opacity = p; $("ck").style.transform = `translateY(${lerp(80, 0, p)}px)`;
+  rows.forEach((r, k) => r.classList.toggle("on", t > CONFIG.firstTick + k * CONFIG.gap));
+});
+</script></body></html>

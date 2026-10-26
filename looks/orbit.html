@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><title>orbit</title>
+<!-- LOOK: orbit. Cards circle around you in 3D, behind your body and in front at chest level. Needs: frames + cutout.
+     By default the cards are stills from your own clip. Put your own images in looks/cards/1.jpg ... 8.jpg to use those instead. -->
+<link rel="stylesheet" href="base.css">
+<style>
+.oc{position:absolute;width:230px;height:409px;border-radius:22px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.35);border:3px solid rgba(255,255,255,.85);background:#222}
+.oc canvas,.oc img{width:100%;height:100%;object-fit:cover;display:block}
+</style></head><body>
+<script>
+// ---- edit me ----
+const CONFIG = { cards: 8, useCardImages: false, centerY: 1300, radiusX: 470, radiusY: 120, speed: 1.1 };
+</script>
+<canvas class="full" id="v" width="1080" height="1920"></canvas>
+<canvas class="full" id="fg" width="1080" height="1920" style="z-index:50"></canvas>
+<script src="../work/frames.js"></script><script src="engine.js"></script>
+<script>
+const { cl, lerp, ease } = Look, $ = id => document.getElementById(id);
+const cards = [...Array(CONFIG.cards)].map((_, k) => {
+  const d = document.createElement("div"); d.className = "oc";
+  d.innerHTML = CONFIG.useCardImages ? `<img src="cards/${k + 1}.jpg">` : `<canvas width="230" height="409"></canvas>`;
+  document.body.appendChild(d); return d;
+});
+const g = $("v").getContext("2d"), f = $("fg").getContext("2d");
+let filled = false;
+Look.start(t => {
+  if (!filled && Look.count && !CONFIG.useCardImages) { // fill cards with stills from across the clip
+    cards.forEach((c, k) => c.querySelector("canvas").getContext("2d").drawImage(Look.frameAt(Math.floor(Look.count * (k + .5) / cards.length)), 0, 0, 230, 409)); filled = true;
+  }
+  g.filter = "brightness(.92)"; Look.paint(g, Look.frame(t)); g.filter = "none";
+  f.clearRect(0, 0, 1080, 1920); Look.paint(f, Look.cut(t));
+  const ap = ease.out(cl((t - .05) / .5));
+  cards.forEach((c, k) => {
+    const th = t * CONFIG.speed + k * Math.PI * 2 / cards.length, z = Math.cos(th), sc = lerp(.62, 1, (z + 1) / 2) * lerp(.5, 1, ap);
+    const x = 540 + CONFIG.radiusX * Math.sin(th) * ap, y = CONFIG.centerY + CONFIG.radiusY * z;
+    c.style.left = (x - 115) + "px"; c.style.top = (y - 205) + "px"; c.style.transform = `scale(${sc}) rotateY(${-Math.sin(th) * 28}deg)`;
+    c.style.zIndex = z > 0 ? 60 : 40; c.style.opacity = cl(ap * 1.5) * lerp(.7, 1, (z + 1) / 2);
+  });
+});
+</script></body></html>

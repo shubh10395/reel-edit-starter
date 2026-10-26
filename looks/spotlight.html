@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><title>spotlight</title>
+<!-- LOOK: spotlight. The room goes dark, a warm spotlight hits you and a neon sign flickers on behind your head. Needs: frames + cutout. -->
+<link rel="stylesheet" href="base.css">
+<style>.neon{position:absolute;left:0;right:0;text-align:center;font-family:"Instrument Serif";font-style:italic;font-size:220px;color:#FFE2D4;letter-spacing:-.02em}</style>
+</head><body>
+<script>
+// ---- edit me ----
+const CONFIG = { text: "/reel-edit", glow: "#D97757", top: 300 };
+</script>
+<canvas class="full" id="v" width="1080" height="1920"></canvas>
+<div class="neon" id="n"></div>
+<canvas class="full" id="fg" width="1080" height="1920"></canvas>
+<script src="../work/frames.js"></script><script src="engine.js"></script>
+<script>
+const { cl } = Look, $ = id => document.getElementById(id), G = CONFIG.glow;
+$("n").textContent = CONFIG.text; $("n").style.top = CONFIG.top + "px";
+$("n").style.textShadow = `0 0 6px #fff,0 0 18px ${G},0 0 40px ${G},0 0 80px ${G},0 0 140px ${G}`;
+const g = $("v").getContext("2d"), f = $("fg").getContext("2d");
+Look.start(t => {
+  g.filter = "brightness(.22) saturate(.6)"; Look.paint(g, Look.frame(t)); g.filter = "none";
+  const rg = g.createRadialGradient(560, 1050, 120, 560, 1050, 900); rg.addColorStop(0, "rgba(255,190,140,.20)"); rg.addColorStop(1, "rgba(0,0,0,0)");
+  g.fillStyle = rg; g.fillRect(0, 0, 1080, 1920);
+  f.clearRect(0, 0, 1080, 1920); f.filter = "brightness(1.06) contrast(1.06)"; Look.paint(f, Look.cut(t)); f.filter = "none";
+  let on = t > .6; for (const k of [.25, .32, .4, .47, .55]) if (t > k && t < k + .04) on = true;
+  $("n").style.opacity = on ? 1 : (t > .2 ? .12 : 0);
+});
+</script></body></html>
